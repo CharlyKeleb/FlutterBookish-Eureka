@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_projects/Theme/theme.dart';
 import 'package:flutter_web_projects/book_app/components/book_list.dart';
 import 'package:flutter_web_projects/book_app/components/text_description.dart';
 import 'package:sizer/sizer.dart';
@@ -35,6 +36,9 @@ class _BookDetailsState extends State<BookDetails> {
               CupertinoIcons.share,
             ),
           ),
+          const SizedBox(
+            width: 320.0,
+          )
         ],
       ),
       body: _buildBody(context),
@@ -53,7 +57,7 @@ _buildBody(BuildContext context) {
       const Divider(thickness: 2.0),
       const Text(
         'Description',
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.w900, fontSize: 23.0),
       ),
       const SizedBox(height: 5.0),
       DescriptionWidget(
@@ -65,7 +69,7 @@ _buildBody(BuildContext context) {
       const SizedBox(height: 15.0),
       const Text(
         'More from Author',
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.w900, fontSize: 23.0),
       ),
       const Divider(thickness: 2.0),
       _buildMoreBookFromAuthor(),
@@ -106,22 +110,22 @@ _buildImageTitle(BuildContext context) {
       const Material(
         type: MaterialType.transparency,
         child: Text(
-          'John Doe',
+          'Devil May Cry',
           style: TextStyle(
-            fontSize: 10.0,
-            fontWeight: FontWeight.bold,
+            fontSize: 23.0,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ),
-      const SizedBox(height: 10.0),
+      const SizedBox(height: 5.0),
       Material(
         type: MaterialType.transparency,
         child: Text(
-          'kamkcmkamkcmkacmk',
+          'This is a new book in the market',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.secondary,
+            color: Constants.blueAccent,
           ),
         ),
       ),
@@ -135,7 +139,7 @@ _buildCategory(BuildContext context) {
     width: 150,
     child: GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: 6,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -143,7 +147,7 @@ _buildCategory(BuildContext context) {
       ),
       itemBuilder: (BuildContext context, int index) {
         return Padding(
-          padding: EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 5.0),
+          padding: const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 5.0),
           child: Container(
             height: 25.0,
             child: Padding(
@@ -152,7 +156,9 @@ _buildCategory(BuildContext context) {
                 onPressed: () {},
                 style: ButtonStyle(
                   side: MaterialStateProperty.all<BorderSide>(
-                    BorderSide(color: Theme.of(context).accentColor),
+                    BorderSide(
+                      color: Constants.blueAccent,
+                    ),
                   ),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
@@ -164,8 +170,9 @@ _buildCategory(BuildContext context) {
                   child: Text(
                     'comedy',
                     style: TextStyle(
-                      fontSize: 9.0,
-                      color: Theme.of(context).accentColor,
+                      fontSize: 10.0,
+                      fontWeight: FontWeight.bold,
+                      color: Constants.blueAccent,
                     ),
                   ),
                 ),
@@ -184,12 +191,12 @@ _buildDownloadReadButton(BuildContext context) {
     child: ElevatedButton(
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(
-          Theme.of(context).accentColor,
+          Constants.blueAccent,
         ),
       ),
       onPressed: () {},
       child: const Center(
-        child: const Text(
+        child: Text(
           'Read Now',
           style: TextStyle(
             fontWeight: FontWeight.w900,
@@ -213,4 +220,3 @@ _buildMoreBookFromAuthor() {
     },
   );
 }
-

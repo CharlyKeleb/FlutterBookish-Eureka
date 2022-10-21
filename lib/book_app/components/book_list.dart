@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_projects/Theme/theme.dart';
 
 class BookList extends StatelessWidget {
   const BookList({Key? key}) : super(key: key);
@@ -46,10 +47,10 @@ class BookList extends StatelessWidget {
                       const Material(
                         type: MaterialType.transparency,
                         child: Text(
-                          'Thing Fall Apart',
+                          'Things Fall Apart',
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 23.0,
+                            fontWeight: FontWeight.w900,
                             // color: Theme.of(context).textTheme.title.color,
                           ),
                           maxLines: 2,
@@ -64,9 +65,9 @@ class BookList extends StatelessWidget {
                         child: Text(
                           'Wole Soyinka',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 16,
                             fontWeight: FontWeight.w800,
-                            color: Theme.of(context).accentColor,
+                            color: Constants.blueAccent,
                           ),
                         ),
                       ),
@@ -79,7 +80,8 @@ class BookList extends StatelessWidget {
                           'A few resources to get you started if this is your first Flutter project. For help getting started with Flutter development, view the online documentation',
                           maxLines: 5,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),

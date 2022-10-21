@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
 import 'package:flutter_web_projects/book_app/views/book_app.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sizer/sizer.dart';
 
 class MyApp extends StatefulWidget {
@@ -14,16 +15,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  @override
   Widget build(BuildContext context) {
+
     return Sizer(builder: (context, orientation, deviceType) {
-      return RootRestorationScope(
-        restorationId: 'root',
+      return ProviderScope(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: Constants.appName,
           theme: themeData(Constants.lightTheme),
-          home: BookApp(),
+          home: const BookApp(),
         ),
       );
     });
@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
 // Apply font to our app's theme
 ThemeData themeData(ThemeData theme) {
   return theme.copyWith(
-    textTheme: GoogleFonts.nunitoTextTheme(
+    textTheme: GoogleFonts.cormorantTextTheme(
       theme.textTheme,
     ),
   );

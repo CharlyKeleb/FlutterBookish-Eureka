@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_projects/Theme/theme.dart';
 
 class DescriptionWidget extends StatefulWidget {
   final String? text;
@@ -33,45 +34,42 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
     return Container(
       child: secondHalf!.isEmpty
           ? Text(
-        '${flag ? (firstHalf) : (firstHalf! + secondHalf!)}'
-            .replaceAll(r'\n', '\n')
-            .replaceAll(r'\r', '')
-            .replaceAll(r"\'", "'"),
-        style: TextStyle(
-          fontSize: 14.0,
-          // color: Theme.of(context).textTheme.caption!.color,
-        ),
-      )
+              '${flag ? (firstHalf) : (firstHalf! + secondHalf!)}'
+                  .replaceAll(r'\n', '\n')
+                  .replaceAll(r'\r', '')
+                  .replaceAll(r"\'", "'"),
+              style:
+                  const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+            )
           : Column(
-        children: <Widget>[
-          Text(
-            '${flag ? (firstHalf! + '...') : (firstHalf! + secondHalf!)}'
-                .replaceAll(r'\n', '\n\n')
-                .replaceAll(r'\r', '')
-                .replaceAll(r"\'", "'"),
-            style: TextStyle(
-              fontSize: 14.0,
-              // color: Theme.of(context).textTheme.caption!.color,
-            ),
-          ),
-          InkWell(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  flag ? 'show more' : 'show less',
-                  style: TextStyle(color: Colors.blue),
+                  (flag ? (firstHalf! + '...') : (firstHalf! + secondHalf!))
+                      .replaceAll(r'\n', '\n\n')
+                      .replaceAll(r'\r', '')
+                      .replaceAll(r"\'", "'"),
+                  style: const TextStyle(
+                    fontSize: 14.0,
+                  ),
+                ),
+                InkWell(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        flag ? 'show more' : 'show less',
+                        style: TextStyle(color: Constants.blueAccent),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    setState(() {
+                      flag = !flag;
+                    });
+                  },
                 ),
               ],
             ),
-            onTap: () {
-              setState(() {
-                flag = !flag;
-              });
-            },
-          ),
-        ],
-      ),
     );
   }
 }

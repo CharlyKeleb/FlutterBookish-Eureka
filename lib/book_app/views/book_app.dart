@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_point_tab_bar/pointTabIndicator.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
 import 'package:flutter_web_projects/book_app/views/Anime/anime.dart';
-import 'package:flutter_web_projects/book_app/views/Favorite/favorite.dart';
 import 'package:flutter_web_projects/book_app/views/HomePage/home.dart';
 import 'package:flutter_web_projects/book_app/views/Manga/manga.dart';
+import 'package:flutter_web_projects/book_app/views/superheroes/superhero.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
@@ -23,7 +23,7 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -40,10 +40,8 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: TabBar(
                 controller: _tabController,
-                labelPadding:
-                    const EdgeInsets.symmetric(horizontal: 25),
-                labelStyle:
-                    GoogleFonts.nunito(fontWeight: FontWeight.bold),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 25),
+                labelStyle: GoogleFonts.nunito(fontWeight: FontWeight.bold),
                 unselectedLabelStyle:
                     GoogleFonts.nunito(fontWeight: FontWeight.bold),
                 indicatorColor: const Color(0xfff3f4f9),
@@ -72,17 +70,17 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   ),
+                  // Tab(
+                  //   child: Text(
+                  //     'Anime',
+                  //     style: TextStyle(
+                  //       fontSize: 15.0,
+                  //     ),
+                  //   ),
+                  // ),
                   Tab(
                     child: Text(
-                      'Anime',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                    ),
-                  ),
-                  Tab(
-                    child: Text(
-                      'Manga',
+                      'Mangas & Animes',
                       style: TextStyle(
                         fontSize: 15.0,
                       ),
@@ -97,8 +95,8 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
                 controller: _tabController,
                 children: const <Widget>[
                   Home(),
-                  Favorite(),
-                  Anime(),
+                  Superheroes(),
+                  // Anime(),
                   Manga(),
                 ],
               ),
@@ -120,7 +118,7 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
           style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22.0),
         ),
         title: Container(
-          height: 5.0.h,
+          height: 4.5.h,
           width: MediaQuery.of(context).size.width - 40.0,
           decoration: BoxDecoration(
             color: Colors.white,
