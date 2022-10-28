@@ -1,121 +1,138 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
-import 'package:flutter_web_projects/book_app/components/error/error_widget.dart';
-import 'package:flutter_web_projects/book_app/provider/superhero_provider.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_web_projects/book_app/components/navigate.dart';
+import 'package:flutter_web_projects/book_app/models/superhero.dart';
+import 'package:flutter_web_projects/book_app/view_models/superhero/superhero_view_model.dart';
+import 'package:flutter_web_projects/book_app/views/superheroes/superhero_details.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-class Superheroes extends HookConsumerWidget {
+class Superheroes extends StatefulWidget {
   const Superheroes({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var superHeroState = ref.watch(superHeroStateNotifierProvider);
+  State<Superheroes> createState() => _SuperheroesState();
+}
 
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.watch(superHeroStateNotifierProvider).maybeWhen(
-              orElse: () {},
-              started: () {
-                ref
-                    .watch(superHeroStateNotifierProvider.notifier)
-                    .getSuperHero();
-              },
-            );
-      });
-      return () {};
+class _SuperheroesState extends State<Superheroes>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Provider.of<SuperHeroViewModel>(context, listen: false)
+          .fetchSuperHeroes();
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    SuperHeroViewModel viewModel = Provider.of<SuperHeroViewModel>(context);
     return Scaffold(
-      body: superHeroState.maybeWhen(
-        orElse: () => const Center(child: CircularProgressIndicator()),
-        error: (isConnectionError) => MyErrorWidget(
-          refreshCallBack: () =>
-              ref.watch(superHeroStateNotifierProvider.notifier).getSuperHero(),
-          isConnection: isConnectionError ?? false,
+      body: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width > 1200 ? 320.0 : 40.0,
         ),
-        success: (superheroes) {
-          return Container(
-            padding: EdgeInsets.symmetric(
-              horizontal:
-                  MediaQuery.of(context).size.width > 1200 ? 320.0 : 40.0,
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Superhero & Villains',
+              style: TextStyle(
+                fontSize: 25.0,
+                fontWeight: FontWeight.w900,
+              ),
             ),
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Superhero & Villains',
-                  style: TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const Text(
-                  'Let\'s take a look at all Superheroes and Villains from different universe',
-                  style: TextStyle(),
-                ),
-                const SizedBox(height: 20.0),
-                Flexible(
-                  child: GridView.builder(
-                    itemCount: 30,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 1.8 / 2.3,
-                    ),
-                    itemBuilder: (BuildContext context, int index) {
-                      return Column(
-                        children: [
-                          Container(
-                            height: MediaQuery.of(context).size.width > 1200
-                                ? 36.h
-                                : 35.0.h,
-                            width: MediaQuery.of(context).size.width > 1200
-                                ? 19.0.w
-                                : 22.0.w,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              elevation: 5,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        superheroes[index].images!.lg!,
+            const Text(
+              'Let\'s take a look at all Superheroes and Villains from different universe',
+              style: TextStyle(),
+            ),
+            const SizedBox(height: 20.0),
+            Flexible(
+              child: viewModel.loading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : GridView.builder(
+                      itemCount: viewModel.superHero.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.8 / 2.6,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        SuperHero superhero =
+                            SuperHero.fromJson(viewModel.superHero[index]);
+                        return Column(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.width > 1200
+                                  ? 50.h
+                                  : 50.0.h,
+                              width: MediaQuery.of(context).size.width > 1200
+                                  ? 19.0.w
+                                  : 22.0.w,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigate.pushPage(
+                                    context,
+                                    HeroDetails(hero: superhero),
+                                  );
+                                },
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 5,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    child: Hero(
+                                      tag: superhero.images!.lg!,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                              superhero.images!.lg!,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Text(
-                            superheroes[index].name!,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18.0,
-                              color: Constants.blueAccent,
+                            Text(
+                              superhero.name!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                                color: Constants.blueAccent,
+                              ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
-          );
-        },
+                          ],
+                        );
+                      },
+                    ),
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void dispose() {
+    Provider.of<SuperHeroViewModel>(context, listen: false).dispose();
+    super.dispose();
   }
 }

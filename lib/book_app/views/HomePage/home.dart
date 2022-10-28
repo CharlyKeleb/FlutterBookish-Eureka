@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
+import 'package:flutter_web_projects/book_app/components/body_builder.dart';
 import 'package:flutter_web_projects/book_app/components/navigate.dart';
+import 'package:flutter_web_projects/book_app/models/category.dart';
+import 'package:flutter_web_projects/book_app/view_models/books/home_view_model.dart';
 import 'package:flutter_web_projects/book_app/views/HomePage/book_details.dart';
 import 'package:flutter_web_projects/book_app/views/HomePage/category/category_screen.dart';
+import 'package:flutter_web_projects/utils/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_web_projects/utils/util.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,80 +20,95 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) => Provider.of<HomeProvider>(context, listen: false).getFeeds(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildHeadingContainer(),
-          SizedBox(height: 2.0.h),
-          const ListTile(
-            leading: Text(
-              'Popular Now',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 22.0,
-              ),
-            ),
-            trailing: Text(
-              'View All',
-              style: TextStyle(
-                color: Colors.brown,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 39.5.h,
-            child: buildPopularBooks(),
-          ),
-          SizedBox(height: 3.0.h),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Book Categories',
+    return Consumer<HomeProvider>(
+        builder: (BuildContext context, HomeProvider viewModel, Widget? child) {
+      return BodyBuilder(
+        apiRequestStatus: viewModel.apiRequestStatus,
+        reload: () => viewModel.getFeeds(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildHeadingContainer(),
+              SizedBox(height: 2.0.h),
+              const ListTile(
+                leading: Text(
+                  'Popular Now',
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
-                    fontSize: 20.0,
+                    fontSize: 22.0,
                   ),
                 ),
-                Text(
-                  'Click to explore different book categories',
-                  style: TextStyle(),
-                ),
-              ],
-            ),
-          ),
-          buildCategories(),
-          SizedBox(height: 3.0.h),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'New Releases',
+                trailing: Text(
+                  'View All',
                   style: TextStyle(
+                    color: Colors.brown,
                     fontWeight: FontWeight.w900,
-                    fontSize: 20.0,
                   ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 45.0.h,
+                child: buildPopularBooks(viewModel),
+              ),
+              SizedBox(height: 3.0.h),
+              ListTile(
+                leading: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Book Categories',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Text(
+                      'Click to explore different book categories',
+                      style: TextStyle(),
+                    ),
+                  ],
+                ),
+              ),
+              buildCategories(viewModel),
+              SizedBox(height: 3.0.h),
+              ListTile(
+                leading: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'New Releases',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 45.0.h,
+                child: buildNewReleases(viewModel),
+              ),
+            ],
           ),
-          SizedBox(
-            height: 39.5.h,
-            child: buildNewReleases(),
-          ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 
   buildHeadingContainer() {
@@ -166,19 +188,31 @@ class _HomeState extends State<Home> {
     );
   }
 
-  buildPopularBooks() {
+  buildPopularBooks(HomeProvider viewModel) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: viewModel.top.feed?.entry?.length ?? 0,
       scrollDirection: Axis.horizontal,
       itemBuilder: (BuildContext context, int index) {
+        final String imgTag = uuid.v4();
+        final String titleTag = uuid.v4();
+        final String authorTag = uuid.v4();
+        Entry entry = viewModel.top.feed!.entry![index];
         return Padding(
           padding: const EdgeInsets.all(5.0),
           child: InkWell(
-            onTap: () => Navigate.pushPage(context, BookDetails()),
+            onTap: () => Navigate.pushPage(
+              context,
+              BookDetails(
+                entry: entry,
+                authorTag: authorTag,
+                imgTag: imgTag,
+                titleTag: titleTag,
+              ),
+            ),
             child: Column(
               children: [
                 Container(
-                  height: 33.0.h,
+                  height: 36.0.h,
                   width: MediaQuery.of(context).size.width > 1200
                       ? 14.0.w
                       : 17.0.w,
@@ -186,19 +220,52 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(5),
                     color: Constants.blueAccent,
                   ),
-                ),
-                Text(
-                  'The Most Dangerous Game',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Constants.blueAccent,
-                    fontSize: 16.0,
+                  child: Hero(
+                    tag: imgTag,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: entry.link![1].href!.isEmpty
+                          ? Container(color: Colors.orange)
+                          : Image.network(
+                              entry.link![1].href!,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
                   ),
                 ),
-                const Text(
-                  'Arthur Conan Doyle',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                Hero(
+                  tag: titleTag,
+                  child: Text(
+                    entry.title!.t!,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Constants.blueAccent,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+                Hero(
+                  tag: authorTag,
+                  child: Text(
+                    entry.author!.name!.t.toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -209,15 +276,19 @@ class _HomeState extends State<Home> {
     );
   }
 
-  buildCategories() {
+  buildCategories(HomeProvider viewModel) {
     return SizedBox(
       height: 6.0.h,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 7.0),
         scrollDirection: Axis.horizontal,
-        itemCount: 10,
+        itemCount: viewModel.top.feed?.link?.length ?? 0,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
+          Link link = viewModel.top.feed!.link![index];
+          if (index < 10) {
+            return const SizedBox();
+          }
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
             child: Container(
@@ -231,16 +302,21 @@ class _HomeState extends State<Home> {
                 borderRadius: const BorderRadius.all(
                   Radius.circular(20),
                 ),
-                onTap: () => Navigate.pushPage(
-                  context,
-                  const CategoryScreen(),
-                ),
-                child: const Center(
+                onTap: () {
+                  Navigate.pushPage(
+                    context,
+                    CategoryScreen(
+                      title: '${link.title}',
+                      url: link.href,
+                    ),
+                  );
+                },
+                child: Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      'Short Stories',
-                      style: TextStyle(
+                      '${link.title}',
+                      style: const TextStyle(
                         color: Colors.white,
                       ),
                     ),
@@ -254,42 +330,82 @@ class _HomeState extends State<Home> {
     );
   }
 
-  buildNewReleases() {
+  buildNewReleases(HomeProvider viewModel) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: viewModel.recent.feed?.entry?.length ?? 0,
       scrollDirection: Axis.horizontal,
       itemBuilder: (BuildContext context, int index) {
+        final String imgTag = uuid.v4();
+        final String titleTag = uuid.v4();
+        final String authorTag = uuid.v4();
+        Entry entry = viewModel.recent.feed!.entry![index];
         return Padding(
           padding: const EdgeInsets.all(5.0),
-          child: Column(
-            children: [
-              Container(
-                height: 33.0.h,
-                width:
-                    MediaQuery.of(context).size.width > 1200 ? 14.0.w : 17.0.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Constants.blueAccent,
-                ),
+          child: InkWell(
+            onTap: () => Navigate.pushPage(
+              context,
+              BookDetails(
+                entry: entry,
+                authorTag: authorTag,
+                imgTag: imgTag,
+                titleTag: titleTag,
               ),
-              Text(
-                'The Blazing World',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Constants.blueAccent,
-                  fontSize: 16.0,
+            ),
+            child: Column(
+              children: [
+                Container(
+                  height: 37.0.h,
+                  width:
+                      MediaQuery.of(context).size.width > 1200 ? 14.0.w : 17.0.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Constants.blueAccent,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: entry.link![1].href!.isEmpty
+                        ? Container(color: Colors.orange)
+                        : Image.network(
+                            entry.link![1].href!,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                  ),
                 ),
-              ),
-              const Text(
-                'Margaret Cavendish',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                Text(
+                  entry.title!.t!,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Constants.blueAccent,
+                    fontSize: 16.0,
+                  ),
                 ),
-              ),
-            ],
+                Text(
+                  entry.author!.name!.t.toString(),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

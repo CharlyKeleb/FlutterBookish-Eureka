@@ -70,14 +70,6 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  // Tab(
-                  //   child: Text(
-                  //     'Anime',
-                  //     style: TextStyle(
-                  //       fontSize: 15.0,
-                  //     ),
-                  //   ),
-                  // ),
                   Tab(
                     child: Text(
                       'Mangas & Animes',
@@ -113,9 +105,9 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
         horizontal: MediaQuery.of(context).size.width > 1200 ? 200 : 0,
       ),
       child: ListTile(
-        leading: const Text(
-          'Flutter Books',
-          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22.0),
+        leading: Text(
+          getText(),
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22.0),
         ),
         title: Container(
           height: 4.5.h,
@@ -144,10 +136,10 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
                 ),
                 hintText: 'Search',
                 border: InputBorder.none,
-                suffixIcon: Icon(
-                  Iconsax.search_normal,
-                  color: Constants.blueAccent,
-                ),
+                // suffixIcon: Icon(
+                //   Iconsax.search_normal,
+                //   color: Constants.blueAccent,
+                // ),
               ),
               onChanged: (query) {},
             ),
@@ -177,5 +169,16 @@ class _BookAppState extends State<BookApp> with SingleTickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  getText() {
+    switch (_tabController!.index) {
+      case 0:
+        return "Flutter Books";
+      case 1:
+        return "Flutter Superhero";
+      case 2:
+        return "Flutter Mangas/Anime";
+    }
   }
 }

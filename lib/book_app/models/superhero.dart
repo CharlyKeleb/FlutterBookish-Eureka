@@ -11,34 +11,25 @@ class SuperHero {
 
   SuperHero(
       {this.id,
-        this.name,
-        this.slug,
-        this.powerstats,
-        this.appearance,
-        this.biography,
-        this.work,
-        this.connections,
-        this.images});
+      this.name,
+      this.slug,
+      this.powerstats,
+      this.appearance,
+      this.biography,
+      this.work,
+      this.connections,
+      this.images});
 
   SuperHero.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     slug = json['slug'];
-    powerstats = json['powerstats'] != null
-        ? Powerstats.fromJson(json['powerstats'])
-        : null;
-    appearance = json['appearance'] != null
-        ? Appearance.fromJson(json['appearance'])
-        : null;
-    biography = json['biography'] != null
-        ? Biography.fromJson(json['biography'])
-        : null;
-    work = json['work'] != null ? Work.fromJson(json['work']) : null;
-    connections = json['connections'] != null
-        ? Connections.fromJson(json['connections'])
-        : null;
-    images =
-    json['images'] != null ? Images.fromJson(json['images']) : null;
+    powerstats = Powerstats.fromJson(json['powerstats']);
+    appearance = Appearance.fromJson(json['appearance']);
+    biography = Biography.fromJson(json['biography']);
+    work = Work.fromJson(json['work']);
+    connections = Connections.fromJson(json['connections']);
+    images = Images.fromJson(json['images']);
   }
 
   Map<String, dynamic> toJson() {
@@ -46,24 +37,18 @@ class SuperHero {
     data['id'] = this.id;
     data['name'] = this.name;
     data['slug'] = this.slug;
-    if (this.powerstats != null) {
-      data['powerstats'] = this.powerstats!.toJson();
-    }
-    if (this.appearance != null) {
-      data['appearance'] = this.appearance!.toJson();
-    }
-    if (this.biography != null) {
-      data['biography'] = this.biography!.toJson();
-    }
-    if (this.work != null) {
-      data['work'] = this.work!.toJson();
-    }
-    if (this.connections != null) {
-      data['connections'] = this.connections!.toJson();
-    }
-    if (this.images != null) {
-      data['images'] = this.images!.toJson();
-    }
+    data['powerstats'] = this.powerstats!.toJson();
+
+    data['appearance'] = this.appearance!.toJson();
+
+    data['biography'] = this.biography!.toJson();
+
+    data['work'] = this.work!.toJson();
+
+    data['connections'] = this.connections!.toJson();
+
+    data['images'] = this.images!.toJson();
+
     return data;
   }
 }
@@ -78,11 +63,11 @@ class Powerstats {
 
   Powerstats(
       {this.intelligence,
-        this.strength,
-        this.speed,
-        this.durability,
-        this.power,
-        this.combat});
+      this.strength,
+      this.speed,
+      this.durability,
+      this.power,
+      this.combat});
 
   Powerstats.fromJson(Map<String, dynamic> json) {
     intelligence = json['intelligence'];
@@ -115,11 +100,11 @@ class Appearance {
 
   Appearance(
       {this.gender,
-        this.race,
-        this.height,
-        this.weight,
-        this.eyeColor,
-        this.hairColor});
+      this.race,
+      this.height,
+      this.weight,
+      this.eyeColor,
+      this.hairColor});
 
   Appearance.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
@@ -153,12 +138,12 @@ class Biography {
 
   Biography(
       {this.fullName,
-        this.alterEgos,
-        this.aliases,
-        this.placeOfBirth,
-        this.firstAppearance,
-        this.publisher,
-        this.alignment});
+      this.alterEgos,
+      this.aliases,
+      this.placeOfBirth,
+      this.firstAppearance,
+      this.publisher,
+      this.alignment});
 
   Biography.fromJson(Map<String, dynamic> json) {
     fullName = json['fullName'];
@@ -245,4 +230,3 @@ class Images {
     return data;
   }
 }
-

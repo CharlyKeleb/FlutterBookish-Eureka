@@ -1,10 +1,16 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
+import 'package:flutter_web_projects/book_app/components/error/error_widget.dart';
 import 'package:flutter_web_projects/book_app/components/navigate.dart';
+import 'package:flutter_web_projects/book_app/view_models/animes/anime_view_model.dart';
+import 'package:flutter_web_projects/book_app/view_models/animes/popular_anime_view_model.dart';
+import 'package:flutter_web_projects/book_app/view_models/animes/trending_anime_view_model.dart';
 import 'package:flutter_web_projects/book_app/views/HomePage/book_details.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class Manga extends StatefulWidget {
@@ -14,42 +20,23 @@ class Manga extends StatefulWidget {
   State<Manga> createState() => _MangaState();
 }
 
-class _MangaState extends State<Manga> {
-  bool transition = false;
-
-  startTimeout() {
-    return Timer(const Duration(seconds: 5), handleTimeout);
-  }
-
-  void handleTimeout() {
-    setState(() {
-      transition = true;
-    });
-  }
-
-  @override
-  void initState() {
-    startTimeout();
-    super.initState();
-  }
+class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
+  final ScrollController bodyScrollController = ScrollController();
+  final ScrollController previewScrollController = ScrollController();
+  final ScrollController trendingScrollController = ScrollController();
+  final ScrollController mostRecentScrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      controller: bodyScrollController,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AnimatedSwitcher(
-            duration: const Duration(
-              seconds: 1,
-            ),
-            child: transition
-                ? SizedBox(
-                    height: 31.5.h,
-                    child: buildPreview(),
-                  )
-                : buildHeadingContainer(),
+          SizedBox(
+            height: 31.5.h,
+            child: buildPreview(),
           ),
           SizedBox(height: 2.0.h),
           const ListTile(
@@ -70,7 +57,7 @@ class _MangaState extends State<Manga> {
           ),
           SizedBox(
             height: 39.5.h,
-            child: buildPopularBooks(),
+            child: buildPopularMovies(),
           ),
           SizedBox(height: 3.0.h),
           ListTile(
@@ -79,7 +66,7 @@ class _MangaState extends State<Manga> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'Trending Animes & Mangas of the Week',
+                  'Trending Mangas of the Week',
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 20.0,
@@ -90,189 +77,241 @@ class _MangaState extends State<Manga> {
           ),
           SizedBox(
             height: 39.5.h,
-            child: buildNewReleases(),
+            child: buildTrendingManga(),
           ),
         ],
       ),
     );
   }
 
-  buildHeadingContainer() {
-    return Center(
-      child: Stack(
-        children: [
-          Container(
-            height: 35.0.h,
-            width: MediaQuery.of(context).size.width > 1200
-                ? MediaQuery.of(context).size.width - 400
-                : MediaQuery.of(context).size.width - 20,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Colors.orange.withOpacity(0.5),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(40.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Do you watch Anime & Mangas?',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: Constants.blueAccent,
-                      fontSize: 25.0,
-                    ),
-                  ),
-                  SizedBox(height: 1.0.h),
-                  Text(
-                    'Explore the Latest and Trending Animes & Mangas.\nWe will also provide you with the latest thrillers',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Constants.thickerAccent,
-                      fontSize: 15.0,
-                    ),
-                  ),
-                  SizedBox(height: 2.0.h),
-                  SizedBox(
-                    height: 5.0.h,
-                    width: 20.0.w,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Constants.blueAccent,
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Center(
-                        child: Text(
-                          'Let\'s Explore Folks!.',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 16.0,
+  buildPopularMovies() {
+    return FutureBuilder(
+      future: Provider.of<PopularMangaProvider>(context, listen: false)
+          .fetchAndSetPopularMovieItems("manga", 4),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.error == null) {
+          return Consumer<PopularMangaProvider>(
+            builder: (context, kitsu, _) {
+              return ListView.builder(
+                itemCount: 10,
+                scrollDirection: Axis.horizontal,
+                controller: mostRecentScrollController,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: InkWell(
+                      onTap: () {},
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 33.0.h,
+                            width: MediaQuery.of(context).size.width > 1200
+                                ? 14.0.w
+                                : 17.0.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Constants.blueAccent,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: kitsu.kitsuItems[index].coverImage!.isEmpty
+                                  ? Container(color: Colors.orange)
+                                  : Image.network(
+                                      kitsu.kitsuItems[index].coverImage!,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                            ),
                           ),
-                        ),
+                          Text(
+                            kitsu.kitsuItems[index].title!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Constants.blueAccent,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 1.5.h,
-            right: 5.w,
-            child: Image.asset(
-              'assets/images/illustrator/reading.png',
-              height: 35.h,
-              width: 36.w,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  buildPopularBooks() {
-    return ListView.builder(
-      itemCount: 10,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: InkWell(
-            onTap: () => Navigate.pushPage(context, BookDetails()),
-            child: Column(
-              children: [
-                Container(
-                  height: 33.0.h,
-                  width: MediaQuery.of(context).size.width > 1200
-                      ? 14.0.w
-                      : 17.0.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Constants.blueAccent,
-                  ),
-                ),
-                Text(
-                  'Attack on Titans',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Constants.blueAccent,
-                    fontSize: 16.0,
-                  ),
-                ),
-                const Text(
-                  'Anime',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
+                  );
+                },
+              );
+            },
+          );
+        }
+        return MyErrorWidget(
+          refreshCallBack: () =>
+              Provider.of<PopularMangaProvider>(context, listen: false)
+                  .fetchAndSetPopularMovieItems("manga", 4),
         );
       },
     );
   }
 
-  buildNewReleases() {
-    return ListView.builder(
-      itemCount: 10,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            children: [
-              Container(
-                height: 30.0.h,
-                width:
-                    MediaQuery.of(context).size.width > 1200 ? 30.0.w : 30.0.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Constants.blueAccent,
-                ),
-              ),
-              Text(
-                'Dragon Ball Z',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Constants.blueAccent,
-                  fontSize: 16.0,
-                ),
-              ),
-              const Text(
-                'Anime',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+  buildTrendingManga() {
+    return FutureBuilder(
+      future: Provider.of<TrendingAnimesProvider>(context, listen: false)
+          .fetchAndSetMovieItems("manga", 6),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.error == null) {
+          return Consumer<TrendingAnimesProvider>(
+            builder: (context, kitsu, _) {
+              return ListView.builder(
+                itemCount: 10,
+                scrollDirection: Axis.horizontal,
+                controller: trendingScrollController,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 30.0.h,
+                          width: MediaQuery.of(context).size.width > 1200
+                              ? 30.0.w
+                              : 30.0.w,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Constants.blueAccent,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: kitsu.kitsuTrendingItems[index].coverImage!
+                                    .isEmpty
+                                ? Container(color: Colors.orange)
+                                : Image.network(
+                                    kitsu.kitsuTrendingItems[index].coverImage!,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ),
+                        Text(
+                          kitsu.kitsuTrendingItems[index].title!,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Constants.blueAccent,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        const Text(
+                          'Manga',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        }
+        return MyErrorWidget(
+          refreshCallBack: () =>
+              Provider.of<TrendingAnimesProvider>(context, listen: false)
+                  .fetchAndSetMovieItems("manga", 4),
         );
       },
     );
   }
 
   buildPreview() {
-    return ListView.builder(
-      itemCount: 10,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Container(
-            height: 30.0.h,
-            width: MediaQuery.of(context).size.width > 1200 ? 35.0.w : 35.0.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.orange,
-            ),
-          ),
-        );
+    return FutureBuilder(
+      future: Provider.of<FeaturedAnimesProvider>(context, listen: false)
+          .fetchAndSetMovieItems("anime", 4),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.error == null) {
+          return Consumer<FeaturedAnimesProvider>(
+            builder: (context, kitsu, _) {
+              return ListView.builder(
+                itemCount: kitsu.kitsuItems.length,
+                scrollDirection: Axis.horizontal,
+                controller: previewScrollController,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Container(
+                      height: 30.0.h,
+                      width: MediaQuery.of(context).size.width > 1200
+                          ? 35.0.w
+                          : 35.0.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: kitsu.kitsuItems[index].coverImage!.isEmpty
+                            ? Container(color: Colors.orange)
+                            : Image.network(
+                                kitsu.kitsuItems[index].coverImage!,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        }
+        return MyErrorWidget(refreshCallBack: () {
+          setState(() {
+            Provider.of<FeaturedAnimesProvider>(context, listen: false)
+                .fetchAndSetMovieItems("anime", 4);
+          });
+        });
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

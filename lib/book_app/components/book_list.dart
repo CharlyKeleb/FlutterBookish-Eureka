@@ -1,13 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
+import 'package:flutter_web_projects/book_app/components/navigate.dart';
+import 'package:flutter_web_projects/book_app/models/category.dart';
+import 'package:flutter_web_projects/book_app/views/HomePage/book_details.dart';
+import 'package:uuid/uuid.dart';
 
 class BookList extends StatelessWidget {
-  const BookList({Key? key}) : super(key: key);
+  final String? img;
+  final String? title;
+  final String? author;
+  final String? date;
+  final String? desc;
+  final Entry? entry;
+
+  BookList({
+    Key? key,
+    this.img,
+    this.title,
+    this.author,
+    this.desc,
+    this.entry,
+    this.date,
+  }) : super(key: key);
+
+  static final uuid = Uuid();
+  final String imgTag = uuid.v4();
+  final String titleTag = uuid.v4();
+  final String authorTag = uuid.v4();
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigate.pushPage(
+          context,
+          BookDetails(
+            entry: entry,
+            imgTag: imgTag,
+            titleTag: titleTag,
+            authorTag: authorTag,
+          ),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: Container(
@@ -23,13 +57,20 @@ class BookList extends StatelessWidget {
                   ),
                 ),
                 elevation: 4,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(5.0),
-                  ),
-                  child: Container(
-                    height: 300.0,
-                    width: 200.0,
+                child: Hero(
+                  tag: imgTag,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                    child: Container(
+                      height: 300.0,
+                      width: 200.0,
+                      child: Image.network(
+                        img!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -44,42 +85,51 @@ class BookList extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const Material(
-                        type: MaterialType.transparency,
-                        child: Text(
-                          'Things Fall Apart',
-                          style: TextStyle(
-                            fontSize: 23.0,
-                            fontWeight: FontWeight.w900,
-                            // color: Theme.of(context).textTheme.title.color,
+                      Hero(
+                        tag: titleTag,
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            title!,
+                            style: const TextStyle(
+                              fontSize: 23.0,
+                              fontWeight: FontWeight.w900,
+                              // color: Theme.of(context).textTheme.title.color,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(
                         height: 5,
                       ),
-                      Material(
-                        type: MaterialType.transparency,
-                        child: Text(
-                          'Wole Soyinka',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: Constants.blueAccent,
+                      Hero(
+                        tag: authorTag,
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            author!,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Constants.blueAccent,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(
                         height: 6,
                       ),
-                      Container(
+                      SizedBox(
                         width: 500.0,
-                        child: const Text(
-                          'A few resources to get you started if this is your first Flutter project. For help getting started with Flutter development, view the online documentation',
+                        child: Text(
+                          '$desc'
+                              .replaceAll(r'\n', '\n')
+                              .replaceAll(r'\r', '')
+                              .replaceAll(r'\"', '"'),
                           maxLines: 5,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -89,11 +139,11 @@ class BookList extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      const Text(
-                        'Published on 4th January',
-                        style: TextStyle(
+                      Text(
+                        'Published $date',
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 10,
+                          fontSize: 14.0,
                         ),
                       ),
                     ],

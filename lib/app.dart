@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
 import 'package:flutter_web_projects/book_app/views/book_app.dart';
+import 'package:flutter_web_projects/utils/providers.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -16,9 +15,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-
     return Sizer(builder: (context, orientation, deviceType) {
-      return ProviderScope(
+      return MultiProvider(
+        providers: providers,
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: Constants.appName,

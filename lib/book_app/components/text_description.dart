@@ -37,11 +37,13 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
               '${flag ? (firstHalf) : (firstHalf! + secondHalf!)}'
                   .replaceAll(r'\n', '\n')
                   .replaceAll(r'\r', '')
-                  .replaceAll(r"\'", "'"),
+                  .replaceAll(r"\'", "'").replaceAll('\'', ''),
               style:
                   const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
             )
           : Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   (flag ? (firstHalf! + '...') : (firstHalf! + secondHalf!))

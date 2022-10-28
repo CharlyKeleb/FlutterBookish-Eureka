@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 class Util {
   static bool isConnectionError(e) {
     if (e.toString().contains("SocketException") ||
@@ -7,4 +9,5 @@ class Util {
       return false;
     }
   }
+
 }

@@ -1,11 +1,11 @@
-class CategoryFeed {
+class CategoryModel {
   String? version;
   String? encoding;
   Feed? feed;
 
-  CategoryFeed({this.version, this.encoding, this.feed});
+  CategoryModel({this.version, this.encoding, this.feed});
 
-  CategoryFeed.fromJson(Map<String, dynamic> json) {
+  CategoryModel.fromJson(Map<String, dynamic> json) {
     version = json['version'];
     encoding = json['encoding'];
     feed = json['feed'] != null ? Feed.fromJson(json['feed']) : null;
