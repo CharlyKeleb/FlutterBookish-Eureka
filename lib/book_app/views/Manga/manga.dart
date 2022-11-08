@@ -4,12 +4,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
 import 'package:flutter_web_projects/book_app/components/error/error_widget.dart';
+import 'package:flutter_web_projects/book_app/components/loading_indicator.dart';
 import 'package:flutter_web_projects/book_app/components/navigate.dart';
 import 'package:flutter_web_projects/book_app/view_models/animes/anime_view_model.dart';
 import 'package:flutter_web_projects/book_app/view_models/animes/popular_anime_view_model.dart';
 import 'package:flutter_web_projects/book_app/view_models/animes/trending_anime_view_model.dart';
-import 'package:flutter_web_projects/book_app/views/HomePage/book_details.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_web_projects/book_app/views/Manga/manga_details.dart';
+import 'package:flutter_web_projects/utils/extension.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -45,13 +46,6 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 fontSize: 22.0,
-              ),
-            ),
-            trailing: Text(
-              'View All',
-              style: TextStyle(
-                color: Colors.brown,
-                fontWeight: FontWeight.w900,
               ),
             ),
           ),
@@ -90,9 +84,7 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
           .fetchAndSetPopularMovieItems("manga", 4),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return loadingIndicator(context);
         } else if (snapshot.error == null) {
           return Consumer<PopularMangaProvider>(
             builder: (context, kitsu, _) {
@@ -103,8 +95,13 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: InkWell(
-                      onTap: () {},
+                    child: GestureDetector(
+                      onTap: () => Navigate.pushPage(
+                        context,
+                        Details(
+                          movie: kitsu.kitsuItems[index],
+                        ),
+                      ),
                       child: Column(
                         children: [
                           Container(
@@ -126,20 +123,10 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
                                       loadingBuilder: (BuildContext context,
                                           Widget child,
                                           ImageChunkEvent? loadingProgress) {
-                                        if (loadingProgress == null)
+                                        if (loadingProgress == null) {
                                           return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        );
+                                        }
+                                        return loadingIndicator(context);
                                       },
                                     ),
                             ),
@@ -148,14 +135,17 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
                             kitsu.kitsuItems[index].title!,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Constants.blueAccent,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Constants.lightAccent
+                                  : Constants.blueAccent,
                               fontSize: 16.0,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  );
+                  ).fadeInList(index, true);
                 },
               );
             },
@@ -176,9 +166,7 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
           .fetchAndSetMovieItems("manga", 6),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return loadingIndicator(context);
         } else if (snapshot.error == null) {
           return Consumer<TrendingAnimesProvider>(
             builder: (context, kitsu, _) {
@@ -191,48 +179,51 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
                     padding: const EdgeInsets.all(5.0),
                     child: Column(
                       children: [
-                        Container(
-                          height: 30.0.h,
-                          width: MediaQuery.of(context).size.width > 1200
-                              ? 30.0.w
-                              : 30.0.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Constants.blueAccent,
+                        GestureDetector(
+                          onTap: () => Navigate.pushPage(
+                            context,
+                            Details(
+                              movie: kitsu.kitsuTrendingItems[index],
+                            ),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: kitsu.kitsuTrendingItems[index].coverImage!
-                                    .isEmpty
-                                ? Container(color: Colors.orange)
-                                : Image.network(
-                                    kitsu.kitsuTrendingItems[index].coverImage!,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (BuildContext context,
-                                        Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
-                                  ),
+                          child: Container(
+                            height: 30.0.h,
+                            width: MediaQuery.of(context).size.width > 1200
+                                ? 30.0.w
+                                : 30.0.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Constants.blueAccent,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: kitsu.kitsuTrendingItems[index].coverImage!
+                                      .isEmpty
+                                  ? Container(color: Colors.orange)
+                                  : Image.network(
+                                      kitsu.kitsuTrendingItems[index]
+                                          .coverImage!,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return loadingIndicator(context);
+                                      },
+                                    ),
+                            ),
                           ),
                         ),
                         Text(
                           kitsu.kitsuTrendingItems[index].title!,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Constants.blueAccent,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Constants.lightAccent
+                                    : Constants.blueAccent,
                             fontSize: 16.0,
                           ),
                         ),
@@ -244,7 +235,7 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
                         ),
                       ],
                     ),
-                  );
+                  ).fadeInList(index, false);
                 },
               );
             },
@@ -265,9 +256,7 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
           .fetchAndSetMovieItems("anime", 4),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return loadingIndicator(context);
         } else if (snapshot.error == null) {
           return Consumer<FeaturedAnimesProvider>(
             builder: (context, kitsu, _) {
@@ -278,25 +267,33 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Container(
-                      height: 30.0.h,
-                      width: MediaQuery.of(context).size.width > 1200
-                          ? 35.0.w
-                          : 35.0.w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
+                    child: GestureDetector(
+                      onTap: () => Navigate.pushPage(
+                        context,
+                        Details(
+                          movie: kitsu.kitsuItems[index],
+                        ),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: kitsu.kitsuItems[index].coverImage!.isEmpty
-                            ? Container(color: Colors.orange)
-                            : Image.network(
-                                kitsu.kitsuItems[index].coverImage!,
-                                fit: BoxFit.cover,
-                              ),
+                      child: Container(
+                        height: 30.0.h,
+                        width: MediaQuery.of(context).size.width > 1200
+                            ? 35.0.w
+                            : 35.0.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: kitsu.kitsuItems[index].coverImage!.isEmpty
+                              ? Container(color: Colors.orange)
+                              : Image.network(
+                                  kitsu.kitsuItems[index].coverImage!,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
                       ),
                     ),
-                  );
+                  ).fadeInList(index, false);
                 },
               );
             },

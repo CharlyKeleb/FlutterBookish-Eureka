@@ -37,7 +37,8 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
               '${flag ? (firstHalf) : (firstHalf! + secondHalf!)}'
                   .replaceAll(r'\n', '\n')
                   .replaceAll(r'\r', '')
-                  .replaceAll(r"\'", "'").replaceAll('\'', ''),
+                  .replaceAll(r"\'", "'")
+                  .replaceAll('\'', ''),
               style:
                   const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
             )
@@ -54,13 +55,15 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                     fontSize: 14.0,
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Text(
                         flag ? 'show more' : 'show less',
-                        style: TextStyle(color: Constants.blueAccent),
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark ? Constants.lightAccent : Constants.blueAccent,
+                        ),
                       ),
                     ],
                   ),

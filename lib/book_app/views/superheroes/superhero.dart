@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
+import 'package:flutter_web_projects/book_app/components/loading_indicator.dart';
 import 'package:flutter_web_projects/book_app/components/navigate.dart';
 import 'package:flutter_web_projects/book_app/models/superhero.dart';
 import 'package:flutter_web_projects/book_app/view_models/superhero/superhero_view_model.dart';
 import 'package:flutter_web_projects/book_app/views/superheroes/superhero_details.dart';
+import 'package:flutter_web_projects/utils/extension.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -45,17 +47,15 @@ class _SuperheroesState extends State<Superheroes>
                 fontSize: 25.0,
                 fontWeight: FontWeight.w900,
               ),
-            ),
+            ).fadeInList(0, false),
             const Text(
               'Let\'s take a look at all Superheroes and Villains from different universe',
               style: TextStyle(),
-            ),
+            ).fadeInList(1, false),
             const SizedBox(height: 20.0),
             Flexible(
               child: viewModel.loading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
+                  ? loadingIndicator(context)
                   : GridView.builder(
                       itemCount: viewModel.superHero.length,
                       gridDelegate:
@@ -70,12 +70,12 @@ class _SuperheroesState extends State<Superheroes>
                           children: [
                             Container(
                               height: MediaQuery.of(context).size.width > 1200
-                                  ? 50.h
-                                  : 50.0.h,
+                                  ? 45.h
+                                  : 45.0.h,
                               width: MediaQuery.of(context).size.width > 1200
                                   ? 19.0.w
                                   : 22.0.w,
-                              child: InkWell(
+                              child: GestureDetector(
                                 onTap: () {
                                   Navigate.pushPage(
                                     context,
@@ -113,11 +113,14 @@ class _SuperheroesState extends State<Superheroes>
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18.0,
-                                color: Constants.blueAccent,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Constants.lightAccent
+                                    : Constants.blueAccent,
                               ),
                             ),
                           ],
-                        );
+                        ).fadeInGrid(index);
                       },
                     ),
             )

@@ -31,7 +31,6 @@ class HeroDetailsState extends State<HeroDetails> {
                 onTap: () => Navigator.pop(context),
                 child: const Icon(
                   Icons.keyboard_backspace,
-                  color: Colors.white,
                 ),
               ),
               title: Text(
@@ -44,9 +43,12 @@ class HeroDetailsState extends State<HeroDetails> {
               flexibleSpace: FlexibleSpaceBar(
                 background: Hero(
                   tag: widget.hero.images!.lg!,
-                  child: Image.network(
-                    widget.hero.images!.lg!,
-                    fit: BoxFit.cover,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image.network(
+                      widget.hero.images!.lg!,
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
@@ -86,6 +88,7 @@ class PowerStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      childrenPadding: EdgeInsets.only(right: 20.0.w),
       initiallyExpanded: true,
       title: const Text(
         'PowerStats',
@@ -94,7 +97,8 @@ class PowerStats extends StatelessWidget {
       children: <Widget>[
         ListTile(
           title: Text(
-              "${"Intelligence".toUpperCase()}  ${hero.powerstats!.intelligence!}%"),
+            "${"Intelligence".toUpperCase()}  ${hero.powerstats!.intelligence!}%",
+          ),
           subtitle: LinearPercentIndicator(
             animation: true,
             lineHeight: 15.0,

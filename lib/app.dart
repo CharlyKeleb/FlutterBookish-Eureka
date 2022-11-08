@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
+import 'package:flutter_web_projects/book_app/view_models/app/theme_provider.dart';
 import 'package:flutter_web_projects/book_app/views/book_app.dart';
 import 'package:flutter_web_projects/utils/providers.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +9,7 @@ import 'package:sizer/sizer.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -18,12 +20,17 @@ class _MyAppState extends State<MyApp> {
     return Sizer(builder: (context, orientation, deviceType) {
       return MultiProvider(
         providers: providers,
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: Constants.appName,
-          theme: themeData(Constants.lightTheme),
-          home: const BookApp(),
-        ),
+        child: Consumer<AppProvider>(builder:
+            (BuildContext context, AppProvider appProvider, Widget? child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: Constants.appName,
+            theme: themeData(
+              appProvider.dark ? Constants.darkTheme : Constants.lightTheme,
+            ),
+            home: const BookApp(),
+          );
+        }),
       );
     });
   }

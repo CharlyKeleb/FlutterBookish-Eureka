@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_projects/book_app/components/loading_indicator.dart';
 import 'package:flutter_web_projects/book_app/enum/api_request_status.dart';
 
 import 'error/error_widget.dart';
@@ -17,25 +18,25 @@ class BodyBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody();
+    return _buildBody(context);
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(context) {
     switch (apiRequestStatus) {
       case APIRequestStatus.loading:
         return Center(
-          child: Container(
+          child: SizedBox(
             height: 50.0,
             width: 50.0,
-            child: Center(child: const CircularProgressIndicator()),
+            child: loadingIndicator(context),
           ),
         );
       case APIRequestStatus.unInitialized:
         return Center(
-          child: Container(
+          child: SizedBox(
             height: 50.0,
             width: 50.0,
-            child: Center(child: const CircularProgressIndicator()),
+            child:loadingIndicator(context),
           ),
         );
       case APIRequestStatus.connectionError:
@@ -52,10 +53,10 @@ class BodyBuilder extends StatelessWidget {
         return child!;
       default:
         return Center(
-          child: Container(
+          child: SizedBox(
             height: 50.0,
             width: 50.0,
-            child: Center(child: const CircularProgressIndicator()),
+            child: loadingIndicator(context),
           ),
         );
     }

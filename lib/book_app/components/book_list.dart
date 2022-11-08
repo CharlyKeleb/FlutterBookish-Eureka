@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_projects/Theme/theme.dart';
 import 'package:flutter_web_projects/book_app/components/navigate.dart';
 import 'package:flutter_web_projects/book_app/models/category.dart';
-import 'package:flutter_web_projects/book_app/views/HomePage/book_details.dart';
+import 'package:flutter_web_projects/book_app/views/Books/book_details.dart';
 import 'package:uuid/uuid.dart';
 
 class BookList extends StatelessWidget {
@@ -30,7 +30,7 @@ class BookList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         Navigate.pushPage(
           context,
@@ -94,7 +94,6 @@ class BookList extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 23.0,
                               fontWeight: FontWeight.w900,
-                              // color: Theme.of(context).textTheme.title.color,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -113,7 +112,7 @@ class BookList extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
-                              color: Constants.blueAccent,
+                              color: Theme.of(context).brightness == Brightness.dark ? Constants.lightAccent : Constants.blueAccent,
                             ),
                           ),
                         ),

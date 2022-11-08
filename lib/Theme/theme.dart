@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Constants {
   //App related strings
-  static String appName = "Flutter Web Projects";
+  static String appName = "Bookish-Eureka";
 
   //Colors for theme
   static Color lightPrimary = const Color(0xfff3f4f9);
@@ -33,12 +33,12 @@ class Constants {
       elevation: 0.0,
       backgroundColor: lightBG,
       iconTheme: const IconThemeData(color: Colors.black),
-      toolbarTextStyle: GoogleFonts.poppins(
+      toolbarTextStyle: GoogleFonts.nunito(
         color: Colors.black,
         fontSize: 20.0,
         fontWeight: FontWeight.w700,
       ),
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: GoogleFonts.nunito(
         color: Colors.black,
         fontSize: 20.0,
         fontWeight: FontWeight.w700,

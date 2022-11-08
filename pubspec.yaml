@@ -41,10 +41,18 @@ dependencies:
   http: ^0.13.5
   dio: ^4.0.6
   provider: ^6.0.4
-  xml2json: ^5.3.5
+  xml2json: ^5.3.0
   uuid: ^3.0.6
   fluttertoast: ^8.1.1
   percent_indicator: ^4.2.2
+  intl: ^0.17.0
+  flutter_rating_bar: ^4.0.1
+  youtube_player_iframe: ^3.1.0
+  flutter_spinkit: ^5.1.0
+  internet_file: ^1.2.0
+  epub_view: ^3.0.0
+  flutter_staggered_animations: ^1.1.1
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +79,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/illustrator/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

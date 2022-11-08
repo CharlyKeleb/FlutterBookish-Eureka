@@ -5,7 +5,7 @@ class Navigate {
   static Future pushPage(BuildContext context, Widget page, {String name = ''}) {
     var val = Navigator.push(
       context,
-      CupertinoPageRoute(
+      MaterialPageRoute(
         builder: (BuildContext context) {
           return page;
         },
@@ -18,7 +18,7 @@ class Navigate {
   static Future pushPageDialog(BuildContext context, Widget page, {String name = ''}) {
     var val = Navigator.push(
       context,
-      CupertinoPageRoute(
+      MaterialPageRoute(
         builder: (BuildContext context) {
           return page;
         },
@@ -33,7 +33,7 @@ class Navigate {
   static pushPageReplacement(BuildContext context, Widget page, {String name = ''}) {
     Navigator.pushReplacement(
       context,
-      CupertinoPageRoute(
+      MaterialPageRoute(
         builder: (BuildContext context) {
           return page;
         },
