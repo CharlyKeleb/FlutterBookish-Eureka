@@ -11,7 +11,7 @@ A new Flutter project for entertainment.
 ## Screenshots
 
 <p>
-<img src="ss/w4.png" width="600"> <img src="ss/w5.png" width="600">
+<img src="ss/w4.png" width="600">
 <img src="ss/w7.png" width="600"> <img src="ss/w8.png" width="600">
 <img src="ss/w9.png" width="600"> <img src="ss/w10.png" width="600">
 
