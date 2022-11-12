@@ -37,15 +37,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
         appBar: AppBar(
           title: EpubViewActualChapter(
             controller: _epubReaderController,
-            builder: (chapterValue) => chapterValue?.chapter?.Title
-                        ?.replaceAll('\n', '')
-                        .trim() ==
-                    'Title'
-                ? Text(
-                    widget.bookTitle,
-                    textAlign: TextAlign.start,
-                  )
-                : Text(
+            builder: (chapterValue) => Text(
                     chapterValue?.chapter?.Title?.replaceAll('\n', '').trim() ??
                         '',
                     textAlign: TextAlign.start,

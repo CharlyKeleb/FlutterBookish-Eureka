@@ -40,7 +40,7 @@ class BookDetailsState extends State<BookDetails> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback(
-          (_) {
+      (_) {
         Provider.of<DetailsProvider>(context, listen: false)
             .setEntry(widget.entry);
         Provider.of<DetailsProvider>(context, listen: false).getFeed(
@@ -70,10 +70,7 @@ class BookDetailsState extends State<BookDetails> {
   _buildBody(DetailsProvider viewModel, BuildContext context) {
     return ListView(
       padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery
-            .of(context)
-            .size
-            .width > 1200 ? 320.0 : 40.0,
+        horizontal: MediaQuery.of(context).size.width > 1200 ? 320.0 : 40.0,
         vertical: 10.0,
       ),
       children: [
@@ -108,10 +105,7 @@ class BookDetailsState extends State<BookDetails> {
       children: [
         Container(
           height: 50.h,
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          width: MediaQuery.of(context).size.width,
           child: Flexible(
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -140,8 +134,6 @@ class BookDetailsState extends State<BookDetails> {
           ),
         ),
         const SizedBox(height: 10.0),
-
-
         Hero(
           tag: widget.titleTag!,
           child: Material(
@@ -165,7 +157,9 @@ class BookDetailsState extends State<BookDetails> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).brightness == Brightness.dark ? Constants.lightAccent : Constants.blueAccent,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Constants.lightAccent
+                    : Constants.blueAccent,
               ),
             ),
           ),
@@ -199,7 +193,9 @@ class BookDetailsState extends State<BookDetails> {
                   style: ButtonStyle(
                     side: MaterialStateProperty.all<BorderSide>(
                       BorderSide(
-                        color: Theme.of(context).brightness == Brightness.dark ? Constants.lightAccent : Constants.blueAccent,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Constants.lightAccent
+                            : Constants.blueAccent,
                       ),
                     ),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -214,7 +210,9 @@ class BookDetailsState extends State<BookDetails> {
                       style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).brightness == Brightness.dark ? Constants.lightAccent : Constants.blueAccent,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Constants.lightAccent
+                            : Constants.blueAccent,
                       ),
                     ),
                   ),
@@ -244,7 +242,7 @@ class BookDetailsState extends State<BookDetails> {
           setState(() {
             loading = false;
           });
-          Navigate.pushPage(
+         Navigate.pushPage(
             context,
             BookReaderPage(
                 epubUrl: url,
@@ -254,13 +252,13 @@ class BookDetailsState extends State<BookDetails> {
         child: loading
             ? loadingIndicator(context)
             : const Center(
-          child: Text(
-            'Read Book',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
+                child: Text(
+                  'Read Book',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
       ),
     );
   }

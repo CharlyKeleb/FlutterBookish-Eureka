@@ -106,9 +106,11 @@ class _MangaState extends State<Manga> with AutomaticKeepAliveClientMixin {
                         children: [
                           Container(
                             height: 33.0.h,
-                            width: MediaQuery.of(context).size.width > 1200
-                                ? 14.0.w
-                                : 17.0.w,
+                            width: MediaQuery.of(context).size.width <= 400
+                                ? 200.0
+                                : MediaQuery.of(context).size.width > 1200
+                                    ? 14.0.w
+                                    : 17.0.w,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               color: Constants.blueAccent,

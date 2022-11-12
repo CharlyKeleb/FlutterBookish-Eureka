@@ -94,7 +94,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               child: SizedBox(
                                 height: MediaQuery.of(context).size.width > 1200
                                     ? 36.h
-                                    : 35.0.h,
+                                    : 40.0.h,
                                 width: MediaQuery.of(context).size.width > 1200
                                     ? 19.0.w
                                     : 22.0.w,
@@ -143,7 +143,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   entry.author!.name!.t!,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).brightness == Brightness.dark ? Constants.lightAccent : Constants.blueAccent,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Constants.lightAccent
+                                        : Constants.blueAccent,
                                     fontSize: 14.0,
                                   ),
                                 ),
@@ -155,7 +158,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   : 22.0.w,
                               child: Text(
                                 entry.summary!.t!,
-                                maxLines:  MediaQuery.of(context).size.width > 1200 ? 5 : 1,
+                                maxLines:
+                                    MediaQuery.of(context).size.width > 1200
+                                        ? 5
+                                        : 1,
                                 style: const TextStyle(
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 12.0,

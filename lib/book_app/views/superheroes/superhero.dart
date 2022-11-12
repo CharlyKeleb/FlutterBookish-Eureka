@@ -58,10 +58,13 @@ class _SuperheroesState extends State<Superheroes>
                   ? loadingIndicator(context)
                   : GridView.builder(
                       itemCount: viewModel.superHero.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 1.8 / 2.6,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            MediaQuery.of(context).size.width <= 400 ? 1 : 3,
+                        childAspectRatio:
+                            MediaQuery.of(context).size.width <= 400
+                                ? 1.8 / 2.3
+                                : 1.8 / 2.6,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         SuperHero superhero =
@@ -69,12 +72,16 @@ class _SuperheroesState extends State<Superheroes>
                         return Column(
                           children: [
                             Container(
-                              height: MediaQuery.of(context).size.width > 1200
-                                  ? 45.h
-                                  : 45.0.h,
-                              width: MediaQuery.of(context).size.width > 1200
-                                  ? 19.0.w
-                                  : 22.0.w,
+                              height: MediaQuery.of(context).size.width <= 400
+                                  ? 300
+                                  : MediaQuery.of(context).size.width > 1200
+                                      ? 45.h
+                                      : 45.0.h,
+                              width: MediaQuery.of(context).size.width <= 400
+                                  ? 300
+                                  : MediaQuery.of(context).size.width > 1200
+                                      ? 19.0.w
+                                      : 22.0.w,
                               child: GestureDetector(
                                 onTap: () {
                                   Navigate.pushPage(
